@@ -1,0 +1,43 @@
+[gd_scene load_steps=9 format=3 uid="uid://bf71ncphdnins"]
+
+[ext_resource type="Script" path="res://MarchingCubes/Generator.gd" id="1_m5iw3"]
+[ext_resource type="Script" path="res://Camera3D.gd" id="5_yno1y"]
+[ext_resource type="Script" path="res://MarchingCubes/addSphere.gd" id="6_6hhhb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4fl6l"]
+albedo_color = Color(0.431373, 0.117647, 1, 1)
+
+[sub_resource type="Environment" id="Environment_5ox2a"]
+ambient_light_color = Color(0.960784, 0.960784, 0.960784, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b7fy0"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_a1qnp"]
+material = SubResource("StandardMaterial3D_b7fy0")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_m5vd5"]
+
+[node name="main" type="Node3D"]
+
+[node name="Generator" type="Node3D" parent="."]
+script = ExtResource("1_m5iw3")
+material = SubResource("StandardMaterial3D_4fl6l")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 1.44283, 2.27361)
+environment = SubResource("Environment_5ox2a")
+script = ExtResource("5_yno1y")
+
+[node name="addSphere" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.68533, 0, 1.88658)
+mesh = SubResource("SphereMesh_a1qnp")
+script = ExtResource("6_6hhhb")
+
+[node name="Area3D" type="Area3D" parent="addSphere"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="addSphere/Area3D"]
+shape = SubResource("SphereShape3D_m5vd5")
+
+[connection signal="set_flag" from="addSphere" to="Generator" method="_on_add_sphere_set_flag"]
+[connection signal="input_event" from="addSphere/Area3D" to="addSphere" method="_on_input_event"]

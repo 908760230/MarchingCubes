@@ -1,0 +1,60 @@
+[gd_scene load_steps=14 format=3 uid="uid://bf71ncphdnins"]
+
+[ext_resource type="Script" path="res://MarchingCubes/Generator.gd" id="1_m5iw3"]
+[ext_resource type="Shader" path="res://terrain.gdshader" id="2_ns7d7"]
+[ext_resource type="Texture2D" uid="uid://dw4vkxd8g1h1p" path="res://grass.jpg" id="3_o3fas"]
+[ext_resource type="Texture2D" uid="uid://dm528mfsxqnbe" path="res://rocks.jpeg" id="4_pnsnu"]
+[ext_resource type="Script" path="res://Camera3D.gd" id="5_yno1y"]
+[ext_resource type="Script" path="res://MarchingCubes/addSphere.gd" id="6_6hhhb"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_phwl8"]
+render_priority = 0
+shader = ExtResource("2_ns7d7")
+shader_parameter/min_grass_height = 0.0
+shader_parameter/max_rock_height = 5.0
+shader_parameter/uvscale = Vector2(5, 5)
+shader_parameter/terrain_grass = ExtResource("3_o3fas")
+shader_parameter/terrain_rock = ExtResource("4_pnsnu")
+
+[sub_resource type="Environment" id="Environment_5ox2a"]
+ambient_light_color = Color(0.960784, 0.960784, 0.960784, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s61yq"]
+albedo_color = Color(0.992157, 1, 0.0901961, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_p3jj7"]
+material = SubResource("StandardMaterial3D_s61yq")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b7fy0"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_a1qnp"]
+material = SubResource("StandardMaterial3D_b7fy0")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_m5vd5"]
+
+[node name="main" type="Node3D"]
+
+[node name="Generator" type="Node3D" parent="."]
+script = ExtResource("1_m5iw3")
+material = SubResource("ShaderMaterial_phwl8")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 1.44283, 2.27361)
+environment = SubResource("Environment_5ox2a")
+script = ExtResource("5_yno1y")
+
+[node name="deleteSphere" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.52958)
+mesh = SubResource("SphereMesh_p3jj7")
+
+[node name="addSphere" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_a1qnp")
+script = ExtResource("6_6hhhb")
+
+[node name="Area3D" type="Area3D" parent="addSphere"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="addSphere/Area3D"]
+shape = SubResource("SphereShape3D_m5vd5")
+
+[connection signal="input_event" from="addSphere/Area3D" to="addSphere" method="_on_input_event"]
